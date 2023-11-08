@@ -6,7 +6,7 @@ import openpyxl
 # 'S:\Customers\23 V1Fiber\23.065.001 V1 Corning Lima\Scranton\Weekly Lima Report Data\Bain Data Comparison.xlsx'
 # Initial file paths
 file_input = r'S:\Customers\23 V1Fiber\23.065.001 V1 Corning Lima\Scranton\Weekly Lima Report Data\Bain Data Comparison.xlsx'
-file_output = r''
+file_output = r'\\ls-dc\FolderRedirection\cbailey\Documents\GitHub\corning_address_comparison\compared_addresses.xlsx'
 
 # Initial lists for data
 list_our_data = []
@@ -106,6 +106,7 @@ print('--------------------------')
 # and unmatched lists.
 list_unmatched_addresses = []
 list_matched_addresses_our_data = []
+list_matched_addresses_corning_data = []
 
 # Initial variables to store lists with no lat and long.
 list_sort_split_our_data = []
@@ -130,6 +131,7 @@ for index, address in enumerate(list_sort_split_our_data):
         index_corning_data = list_sort_split_corning_data.index(address)
         # Append matched address to list_matched_address.
         list_matched_addresses_our_data.append(list_sort_our_data[index])
+        list_matched_addresses_corning_data.append(list_sort_corning_data[index_corning_data])
         # Remove matched address from corning data.
         list_sort_corning_data.remove(list_sort_corning_data[index_corning_data])
         list_sort_split_corning_data.remove(address)
@@ -138,13 +140,30 @@ for index, address in enumerate(list_sort_split_our_data):
 
 print(f'Length of matched addresses: {len(list_matched_addresses_our_data)}')
 print(f'Length of un-matched addresses: {len(list_unmatched_addresses)}')
-print(f'Length of corning addresses: {len(list_sort_corning_data)}')
+print(f'Length of matched corning addresses: {len(list_matched_addresses_corning_data)}')
+print(f'Length of un-matched corning addresses: {len(list_sort_corning_data)}')
 print('--------------------------')
 
 # Go through the unmatched address list,
 # matched address list, and sorted
 # corning data and write it to a new excel file.
 wb_output = openpyxl.Workbook()
+wb_output.remove(wb_output.active)
+sheet_matched = wb_output.create_sheet('Matched', 0)
+sheet_unmatched = wb_output.create_sheet('Un-Matched', 1)
+
+for row, row_data in enumerate(list_matched_addresses_our_data):
+    sheet_matched.cell(row=row+1, column=1).value = row_data
+    sheet_matched.cell(row=row+1, column=2).value = list_matched_addresses_corning_data[row]
+
+for row, row_data in enumerate(list_unmatched_addresses):
+    sheet_unmatched.cell(row=row+1, column=1).value = row_data
+
+for row, row_data in enumerate(list_sort_corning_data):
+    sheet_unmatched.cell(row=row+1, column=2).value = row_data
+
+wb_output.save(file_output)
+wb_output.close()
 
 
 
