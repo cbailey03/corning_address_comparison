@@ -36,12 +36,15 @@ address_full = ''
 # Store in an array.
 for row in range(start_row, end_row+1):
     mail_add = ws_our_data.cell(row=row,column=2).value
-    unit_number = ws_our_data.cell(row=row,column=3).value
+    if ws_our_data.cell(row=row,column=3).value != None:
+        unit_number = ' unit ' + str(ws_our_data.cell(row=row,column=3).value)
+    else:
+        unit_number = ''
     municipality = ws_our_data.cell(row=row,column=4).value
     zip_code = ws_our_data.cell(row=row,column=5).value
     lat = ws_our_data.cell(row=row,column=7).value
     long = ws_our_data.cell(row=row,column=8).value
-    address_full = f'{mail_add} unit {unit_number}, {municipality} {zip_code}; {lat} {long}'
+    address_full = f'{mail_add}{unit_number}, {municipality} {zip_code}; {lat} {long}'
     #address_full = f'{mail_add} unit {unit_number}, {municipality} {zip_code}'
     list_our_data.append(address_full.lower())
 
@@ -56,12 +59,15 @@ end_row = ws_corning_data.max_row
 # Store in an array.
 for row in range(start_row, end_row+1):
     mail_add = ws_corning_data.cell(row=row,column=3).value
-    unit_number = ws_corning_data.cell(row=row,column=4).value
+    if ws_corning_data.cell(row=row,column=4).value != None:
+        unit_number = ' unit ' + str(ws_corning_data.cell(row=row,column=4).value)
+    else:
+        unit_number = ''
     municipality = ws_corning_data.cell(row=row,column=5).value
     zip_code = ws_corning_data.cell(row=row,column=6).value
     lat = ws_corning_data.cell(row=row,column=7).value
     long = ws_corning_data.cell(row=row,column=8).value
-    address_full = f'{mail_add} unit {unit_number}, {municipality} {zip_code}; {lat} {long}'
+    address_full = f'{mail_add}{unit_number}, {municipality} {zip_code}; {lat} {long}'
     #address_full = f'{mail_add} unit {unit_number}, {municipality} {zip_code}'
     list_corning_data.append(address_full.lower())
 
@@ -151,6 +157,7 @@ wb_output = openpyxl.Workbook()
 wb_output.remove(wb_output.active)
 sheet_matched = wb_output.create_sheet('Matched', 0)
 sheet_unmatched = wb_output.create_sheet('Un-Matched', 1)
+sheet_unmatched_corning = wb_output.create_sheet('Corning', 2)
 
 for row, row_data in enumerate(list_matched_addresses_our_data):
     sheet_matched.cell(row=row+1, column=1).value = row_data
@@ -160,7 +167,7 @@ for row, row_data in enumerate(list_unmatched_addresses):
     sheet_unmatched.cell(row=row+1, column=1).value = row_data
 
 for row, row_data in enumerate(list_sort_corning_data):
-    sheet_unmatched.cell(row=row+1, column=2).value = row_data
+    sheet_unmatched_corning.cell(row=row+1, column=1).value = row_data
 
 wb_output.save(file_output)
 wb_output.close()
